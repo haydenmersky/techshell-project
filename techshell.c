@@ -9,28 +9,27 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <wait.h>
+#include <stdlib.h>
+#include <limits.h>
 
 //Functions to implement:
 char* CommandPrompt(){ // Display current working directory and return user input
-    char path[PATH_MAX]; // define buffer for getcwd command
+    char* cwd = getcwd(NULL, 0); // get current working directory, also mallocs automatically
 
-    // Error handling for getcwd
-    if (getcwd(path, sizeof(path)) != NULL) { // If successful, convert to char* and return
-        char* cwd = getcwd(path, sizeof(path));
-        return cwd;
-    } else { // Otherwise, print error and return NULL
+    if (cwd == NULL) { // Error handling
         perror("getcwd() error");
         return NULL;
     }
-
+    return cwd;
 }
+
 struct ShellCommand ParseCommandLine(char* input); // Process the user input (As a shell command)
 
 void ExecuteCommand(struct ShellCommand command); //Execute a shell command
 
 int main() {
     char* input;
-    struct ShellCommand command;
+    //struct ShellCommand command;
 
     // repeatedly prompt the user for input
     for (;;)
