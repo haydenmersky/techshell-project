@@ -20,12 +20,25 @@ char* CommandPrompt(){ // Display current working directory and return user inpu
         perror("getcwd() error");
         return NULL;
     }
-    return cwd;
+
+    // Prompt the user for input
+    printf("%s$ ", cwd);
+    free(cwd); // Free the memory allocated by getcwd to prevent memory leaks
+
+    // Read the input
+    char* input = NULL;
+    size_t size = 0; // C's unsigned integer type, needed because of potential size issues with int
+    fgets(&input, &size, stdin); // Read user input from stdin. Use fgets to prevent issues from an unknown input size
+
+    // Remove the newLine character, quirk of fgets
+    input[strcspn(input, "\n")] = 0; // strcspn returns index of first "\n", then we set that index to 0 to remove
+
+    return input;
 }
 
-struct ShellCommand ParseCommandLine(char* input); // Process the user input (As a shell command)
+//struct ShellCommand ParseCommandLine(char* input); // Process the user input (As a shell command)
 
-void ExecuteCommand(struct ShellCommand command); //Execute a shell command
+//void ExecuteCommand(struct ShellCommand command); //Execute a shell command
 
 int main() {
     char* input;
@@ -36,9 +49,11 @@ int main() {
     {
         input = CommandPrompt();
         // parse the command line
-        command = ParseCommandLine(input);
+        //command = ParseCommandLine(input);
         // execute the command
-        ExecuteCommand(command);
+        //ExecuteCommand(command);
+
+        free(input); // Free the memory allocated by getcwd
     }
     exit(0);
 
