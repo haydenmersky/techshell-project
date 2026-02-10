@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <wait.h>
+//#include <wait.h>
 
 //Functions to implement:
 char* CommandPrompt(){ // Display current working directory and return user input
