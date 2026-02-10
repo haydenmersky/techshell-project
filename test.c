@@ -11,6 +11,7 @@
 #include <wait.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <string.h>
 
 //Functions to implement:
 char* CommandPrompt(){ // Display current working directory and return user input
@@ -28,10 +29,15 @@ char* CommandPrompt(){ // Display current working directory and return user inpu
     // Read the input
     char* input = NULL;
     size_t size = 0; // C's unsigned integer type, needed because of potential size issues with int
-    fgets(&input, &size, stdin); // Read user input from stdin. Use fgets to prevent issues from an unknown input size
 
-    // Remove the newLine character, quirk of fgets
-    input[strcspn(input, "\n")] = 0; // strcspn returns index of first "\n", then we set that index to 0 to remove
+    if (getline(&input, &size, stdin) == -1) { // Read user input from getline. Use getline to prevent issues from an unknown input size
+        perror("getline() error");
+        free(input);
+        return NULL;
+    }
+
+    // Remove the newLine character, quirk of getline
+    input[strcspn(input, "\n")] = '\0'; // strcspn returns index of first "\n", then we set that index to '\0' to remove
 
     return input;
 }
