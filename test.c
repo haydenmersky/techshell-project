@@ -24,9 +24,6 @@ char* CommandPrompt(){ // Display current working directory and return user inpu
     }
 
 }
-struct ShellCommand ParseCommandLine(char* input); // Process the user input (As a shell command)
-
-void ExecuteCommand(struct ShellCommand command); //Execute a shell command
 
 int main() {
     char* input;
@@ -37,9 +34,9 @@ int main() {
     {
         input = CommandPrompt();
         // parse the command line
-        command = ParseCommandLine(input);
+        //command = ParseCommandLine(input);
         // execute the command
-        ExecuteCommand(command);
+        //ExecuteCommand(command);
     }
     exit(0);
 
