@@ -1,10 +1,17 @@
 /*
 * Name(s): Hayden Mersky, Nicholas Sanders, Ashish Ghimire
 * Date: 02/09/2026
-* Description: **Include what you were and were not able to handle!**
+* Description: Program that allows a user to enter commands to be interpreted by a shell.
+The program utilizes 3 methods in conjunction with one another: CommandPrompt(), 
+ParseCommandLine(), and ExecuteCommand(). CommandPrompt() receives the command,
+which is then parsed by ParseCommandLine() and sent to ExecuteCommand() to be
+carried out in a child process utilizing execvp. 
+The shell also supports input and output redirection using < and >.
+The shell continues to prompt the user until "exit" is entered and the program terminates.
 *
 *
 */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
