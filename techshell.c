@@ -287,11 +287,11 @@ int main() {
         }
 
         // for Parse testing purposes, print the parsed command and arguments. Ignore in final product.
-        printf("Command: %s\n", command.args[0]);
-        printf("Arguments:\n");
-        for (int i = 0; command.args[i] != NULL; i++) {
-            printf("  %s\n", command.args[i]);
-        }
+        // printf("Command: %s\n", command.args[0]);
+        // printf("Arguments:\n");
+        // for (int i = 0; command.args[i] != NULL; i++) {
+        //     printf("  %s\n", command.args[i]);
+        // }
 
         // execute the command
         //ExecuteCommand(command);
