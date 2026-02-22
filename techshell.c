@@ -8,10 +8,11 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <wait.h>
+#include <sys/wait.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
+#include <errno.h>
 
 struct ShellCommand {
     char** args; // The arguments to the command, including the command itself as the first argument
@@ -155,6 +156,113 @@ struct ShellCommand ParseCommandLine(char* input) {
 }
 
 //void ExecuteCommand(struct ShellCommand command); // Execute a shell command
+// Function excutes a parsed sheel commmand 
+// Returns 1 if the shell should termintat else 0 
+int ExecuteCommand(struct ShellCommand command){
+
+    // if there is no command do nothing
+    if (command.args == NULL || command.args[0] == NULL) {
+        return 0;
+    }
+    
+    // "exit" smust terminate the shell
+    if (strcmp(command.args[0], "exit") == 0) {
+        return 1; // telling main to stop
+    }
+
+    // cd must run in parent process , if ran in the child , directory would disappear
+    if (strcmp(command.args[0], "cd") == 0) {
+        // first args should contain the path after cd 
+        char* target = command.args[1];
+    
+
+    // if user typed only cd go to home directory
+        if (target == NULL){
+        target = getenv("HOME");
+     }
+    
+    // change thie directory 
+    if (chdir(target) != 0) {
+        // printing error message if cd fails
+        fprintf(stderr ,"cd: %s: %s\n", target, strerror(errno));
+    }
+
+    return 0;
+}
+
+// forking duplicate the current process 
+// parent and child continue from here 
+
+pid_t pid = fork();
+
+if (pid < 0){
+    fprintf(stderr, "Error %d (%s)\n", errno, strerror(errno));
+    return 0;
+}
+
+// child process
+if (pid == 0){
+    // input redirection < if  parser detected an input file 
+    if (command.input_file != NULL){
+
+        // open the file for reading 
+        FILE* infile = fopen(command.input_file, "r");
+        
+        // if file counldnt open
+        if (infile == NULL){
+            fprintf(stderr, "Error %d (%s)\n", errno, strerror(errno));
+            _exit(1); // terminate child 
+        }
+
+        // replace stdin fd(0) with open file 
+        // fileno() converting file* to fd
+        if (dup2(fileno(infile), STDIN_FILENO) < 0){
+            fprintf(stderr, "Error %d (%s)\n", errno, strerror(errno));
+            fclose(infile);
+            _exit(1);
+        }
+        // close original file* stdin now points to the same file 
+        fclose(infile);
+    }
+    // output redirectioon >
+
+    if(command.output_file != NULL){
+        // open file 
+        FILE* outfile = fopen(command.output_file, "w");
+
+        if (outfile == NULL){
+            fprintf(stderr, "Error %d (%s)\n", errno, strerror(errno));
+            _exit(1);
+        }
+
+        //replace stdout fd(1) with file 
+        if(dup2(fileno(outfile), STDOUT_FILENO) < 0){
+            fprintf(stderr, "Error %d (%s)\n" ,errno, strerror(errno));
+            fclose(outfile);
+            _exit(1);
+        }
+        fclose(outfile);
+    }
+
+    //execute program
+    // execvp replaces this child process ,with the request program
+    execvp(command.args[0], command.args);
+
+    // if execvp returns there is error 
+    fprintf(stderr, "Error %d (%s)\n", errno, strerror(errno));
+
+    _exit(1); // end child process
+}
+
+    // parent process 
+    //parents waits for child to finish preventing prompt apearing early 
+    int status;
+    waitpid(pid, &status,0);
+
+    return 0;
+
+
+}
 
 int main() {
     char* input;
@@ -187,11 +295,15 @@ int main() {
 
         // execute the command
         //ExecuteCommand(command);
-
+        int shouldExit = ExecuteCommand(command);
         // Frees the memory allocated for the command and its arguments
         FreeStruct(&command); 
         // Frees the memory allocated by getcwd
         free(input); 
+        
+        if (shouldExit) {
+            break;
+        }
     }
     exit(0);
 
