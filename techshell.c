@@ -157,7 +157,7 @@ struct ShellCommand ParseCommandLine(char* input) {
 
 //void ExecuteCommand(struct ShellCommand command); // Execute a shell command
 // Function excutes a parsed sheel commmand 
-// Returns 1 if the shell should termintat else 0 
+// Returns 1 if the shell should termint else 0 
 int ExecuteCommand(struct ShellCommand command){
 
     // if there is no command do nothing
@@ -286,12 +286,12 @@ int main() {
             continue;
         }
 
-        // for Parse testing purposes, print the parsed command and arguments. Ignore in final product.
-        printf("Command: %s\n", command.args[0]);
-        printf("Arguments:\n");
-        for (int i = 0; command.args[i] != NULL; i++) {
-            printf("  %s\n", command.args[i]);
-        }
+        // // for Parse testing purposes, print the parsed command and arguments. Ignore in final product.
+        // printf("Command: %s\n", command.args[0]);
+        // printf("Arguments:\n");
+        // for (int i = 0; command.args[i] != NULL; i++) {
+        //     printf("  %s\n", command.args[i]);
+        // }
 
         // execute the command
         //ExecuteCommand(command);
