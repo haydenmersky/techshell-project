@@ -19,5 +19,18 @@ commands of any length can be read. The input string is cleaned up by removing t
 included newline, and any errors are handled before the command is sent to ParseCommandLine().
 
 ParseCommandLine()
+    ParseCommandLine() takes the input given from CommandPrompt() and essentially
+divides it into the initial command, the arguments potentially given, as well as
+the possible input or output direction. It does this by putting the input through 
+a defined ShellCommand structure. It begins by initializing one with every field 
+set to NULL. The memory is dynamically allocated for the arguments array, starting 
+at a capacity of 64 slots and doubling via realloc() if that limit is exceeded. The 
+input string is duplicated with strdup() to preserve the original, then tokenized 
+by spaces using strtok(). As each token is processed, the function checks whether 
+it is a redirection operator ('<' or '>'). If found, the following token is stored 
+as an input or output file using strdup(). All other tokens are treated as command
+arguments and appended to the args array. THe args array is NULL-terminated at the
+end, the duplication input string is freed, and the completed ShellCommand struct
+is returned to main() to be passed into ExecuteCommand().
 
 ExecuteCommand()
