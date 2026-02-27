@@ -1,0 +1,8 @@
+Script started on 2026-02-25 00:10:52+00:00 [TERM="xterm" TTY="/dev/pts/0" COLUMNS="80" LINES="24"]
+[?2004h]0;nick@nick-vm-csc2223: ~nick@nick-vm-csc2223:~$ script./techshell
+[?2004l/home/nick$ cd Desktop
+/home/nick/Desktop$ exit
+[?2004h]0;nick@nick-vm-csc2223: ~nick@nick-vm-csc2223:~$ exit
+[?2004lexit
+
+Script done on 2026-02-25 00:11:14+00:00 [COMMAND_EXIT_CODE="0"]

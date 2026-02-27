@@ -34,3 +34,17 @@ end, the duplication input string is freed, and the completed ShellCommand struc
 is returned to main() to be passed into ExecuteCommand().
 
 ExecuteCommand()
+    ExecuteCommand() takes the ShellCommand struct from ParseCommandLine() and
+carries out the requested command in a child process, returning 1 if the shell
+should terminate and 0 otherwise. It first checks whether the command is empty,
+doing nothing if so. It then handles two special cases that must run outside
+of a child process: "exit", which signals main to break the shell loop, and "cd",
+which calls chdir() in the parent process directly since a directory change in a 
+child process would not persist. For all other commands, fork() is used to spawn 
+a child process. If input or output redirection was specified by ParseCommandLine(), 
+the child uses fopen() and dup2() to replace the input or output file descriptors 
+with the appropriate files before execution. execvp() is then called to replace 
+the child process with the requested program, and if it returns, an error is 
+printed and the child exits with _exit(). Back in the parent process, waitpid() 
+blocks until the child finishes, preventing the shell prompt from reappearing too 
+soon.
